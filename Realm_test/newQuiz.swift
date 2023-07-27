@@ -68,31 +68,25 @@ import SwiftUI
 //インデックスが最後に到達する(クイズが全て終了する)と、「クイズを終了します。」と表示され、ビュー１へ戻る
 
 
-struct protQuizStartView: View {
-    var body: some View{
-        VStack{
-            Text("今までメモしたことを思い出してみましょう")
-            Button("クイズを始める", action: getquiz)
+
+// ビュー１
+struct protQuizView: View {
+    @State private var startQuiz = false
+    
+    var body: some View {
+        VStack {
+            Text("今まで記録したことを思い出してみましょう！")
+            Button("クイズを始める", action: { startQuiz = true })
+                .sheet(isPresented: $startQuiz, content: {
+                    ContentView(startQuiz: $startQuiz)
+                })
         }
-    }
-    func getquiz() {
-        @State private var notes: [Note] = {
-            do {
-                let realm = try Realm()
-                let results = realm.objects(Note.self)
-                let shuffledResults = Array(results).shuffled()
-                let selectedNotes = shuffledResults.prefix(5)
-                return Array(selectedNotes)
-            } catch {
-                print("Failed to access Realm: \(error)")
-                return []
-            }
-        }()
     }
 }
 
-
-struct protQuizView: View {
+// ビュー２＆３
+struct ContentView: View {
+    @Binding var startQuiz: Bool
     @State private var notes: [Note] = {
         do {
             let realm = try Realm()
@@ -117,7 +111,9 @@ struct protQuizView: View {
                 Text("この説明が示す、あなたがメモした言葉は？")
                 Text(notes[currentNoteIndex].noteDescription)
                 TextField("あなたの回答", text: $answer)
-                Button("解答", action: checkAnswer)
+                if !showAnswer {
+                                    Button("解答", action: checkAnswer)
+                                }
                 
                 if showAnswer {
                     if isCorrect {
@@ -131,7 +127,7 @@ struct protQuizView: View {
             }
         } else {
             Text("クイズを終了します。")
-            Button("再開", action: restartQuiz)
+            Button("閉じる", action: { startQuiz = false })
         }
     }
     
@@ -145,11 +141,70 @@ struct protQuizView: View {
         showAnswer = false
         currentNoteIndex += 1
     }
-    
-    func restartQuiz() {
-        currentNoteIndex = 0
-    }
 }
+
+
+
+
+//  7/25
+//struct protQuizView: View {
+//    @State private var notes: [Note] = {
+//        do {
+//            let realm = try Realm()
+//            let results = realm.objects(Note.self)
+//            let shuffledResults = Array(results).shuffled()
+//            let selectedNotes = shuffledResults.prefix(5)
+//            return Array(selectedNotes)
+//        } catch {
+//            print("Failed to access Realm: \(error)")
+//            return []
+//        }
+//    }()
+//
+//    @State private var currentNoteIndex = 0
+//    @State private var answer = ""
+//    @State private var showAnswer = false
+//    @State private var isCorrect = false
+//
+//    var body: some View {
+//        if currentNoteIndex < notes.count {
+//            VStack {
+//                Text("この説明が示す、あなたがメモした言葉は？")
+//                Text(notes[currentNoteIndex].noteDescription)
+//                TextField("あなたの回答", text: $answer)
+//                Button("解答", action: checkAnswer)
+//
+//                if showAnswer {
+//                    if isCorrect {
+//                        Text("正解！")
+//                    } else {
+//                        Text("不正解。")
+//                    }
+//
+//                    Button("次の問題へ", action: nextQuestion)
+//                }
+//            }
+//        } else {
+//            Text("クイズを終了します。")
+//            Button("再開", action: restartQuiz)
+//        }
+//    }
+//
+//    func checkAnswer() {
+//        showAnswer = true
+//        isCorrect = (answer == notes[currentNoteIndex].word)
+//    }
+//
+//    func nextQuestion() {
+//        answer = ""
+//        showAnswer = false
+//        currentNoteIndex += 1
+//    }
+//
+//    func restartQuiz() {
+//        currentNoteIndex = 0
+//    }
+//}
 
 
 //struct protQuizView: View {
