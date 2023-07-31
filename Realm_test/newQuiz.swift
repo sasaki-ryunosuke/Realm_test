@@ -109,10 +109,12 @@ struct ContentView: View {
         if currentNoteIndex < notes.count {
             VStack {
                 Text("この説明が示す、あなたがメモした言葉は？")
+                    .padding()
                 Text(notes[currentNoteIndex].noteDescription)
                 TextField("あなたの回答", text: $answer)
                 if !showAnswer {
-                                    Button("解答", action: checkAnswer)
+                    Button("解答", action: checkAnswer).padding()
+
                                 }
                 
                 if showAnswer {

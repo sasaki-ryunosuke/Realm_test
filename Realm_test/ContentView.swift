@@ -40,17 +40,19 @@ struct HomeView: View {
                     Text("Create Note")
                 }
             
-            NotesListView()
-                .tabItem {
+            NavigationView{
+                NotesListView()
+            }
+            .tabItem {
                     Image(systemName: "2.square.fill")
                     Text("View Notes")
                 }
-            
-            QuizView()
-                .tabItem {
-                    Image(systemName: "3.square.fill")
-                    Text("Play Quiz")
-                }
+//旧クイズ
+//            QuizView()
+//                .tabItem {
+//                    Image(systemName: "3.square.fill")
+//                    Text("Play Quiz")
+//                }
 
             protQuizView()
                 .tabItem {
